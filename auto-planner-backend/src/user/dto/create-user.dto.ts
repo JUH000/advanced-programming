@@ -7,6 +7,6 @@ export class CreateUserDto {
   @ApiProperty({ example: 'yuhuijeong' })
   password: string;
 
-  @ApiProperty({ example: '새벽형' })
+  @ApiProperty({ example: '야행성' })
   studyPreference: string;
 }

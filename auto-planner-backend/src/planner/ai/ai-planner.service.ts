@@ -1,70 +1,104 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { AiGeneratePlanDto } from './dto/generate-plan.dto';
+import { ConfigService } from '@nestjs/config';
+import { AiGeneratePlanDto } from './dto/ai-planner.dto';
 import axios from 'axios';
-import { ConfigService } from '@nestjs/config'; // 환경변수 관리 모듈 추가
+import { UserPreferenceService } from '../../user-preference/user-preference.service';
+import { ExamService } from '../../exam/exam.service';
+
+import { NotionService } from '../../notion/notion.service';
 
 @Injectable()
-// AiPlannerService : NestJS의 @Injectable() 데코레이터 통해 의존성 주입 가능한 서비스로 등록
 export class AiPlannerService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userPreferenceService: UserPreferenceService,
+    private readonly examService: ExamService,
+    private readonly notionService: NotionService, // ✅ 추가
+  ) {}
 
-  // generateStudyPlan : 사용자가 보낸 dto를 바탕으로 프롬프트 생성
-  async generateStudyPlan(dto: AiGeneratePlanDto): Promise<any> {
-    const prompt = this.createPrompt(dto);
+  async generateStudyPlanByUserId(userId: string): Promise<any> {
+    const preference = await this.userPreferenceService.findByUserId(userId);
+    const exam = await this.examService.findLatestByUserId(userId); // 가장 최근 시험 가져오기 (예시)
 
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
-    const model =
-      this.configService.get<string>('OPENAI_MODEL') || 'gpt-3.5-turbo'; // 기본 모델 설정
+    if (!preference || !exam) throw new InternalServerErrorException('필수 정보가 없습니다');
+
+    const prompt = this.createPrompt(exam, preference); // ✅ 여기서부터 dto → exam
+
+    const hfApiKey = this.configService.get<string>('HF_API_KEY');
+    const hfModel = this.configService.get<string>('HF_MODEL');
+
     try {
-      // OpenAI ChatGPT API 호출
       const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: 'gpt-3.5-turbo', // 필요에 따라 gpt-3.5-turbo로도 변경 가능
-          messages: [
-            { role: 'system', content: 'You are a helpful study planner.' },
-            { role: 'user', content: prompt },
-          ],
-        },
+        `https://api-inference.huggingface.co/models/${hfModel}`,
+        { inputs: prompt },
         {
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer ${hfApiKey}`,
             'Content-Type': 'application/json',
           },
         },
       );
 
-      const content = (response.data as any).choices[0].message.content;
-      console.log('[GPT 응답]', content);
-      return JSON.parse(content);
-    } catch (error) {
-      console.error(
-        '[🔥 GPT 호출 오류]',
-        error.response?.data || error.message,
-      );
-      throw new InternalServerErrorException('AI 응답 처리 중 오류 발생');
+      const rawText = response.data?.[0]?.generated_text || response.data;
+      const parsed = JSON.parse(rawText);
+      const optimized = this.optimizeResponse(parsed, exam.startDate);// ← dto → exam
+      await this.notionService.saveScheduleToNotion(userId, optimized);
+      return optimized;
+    } catch (err) {
+      console.error('[AI 오류]', err);
+      throw new InternalServerErrorException('AI 처리 실패');
     }
   }
 
-  // createPrompt : GeneratePlanDto를 바탕으로 프롬프트 생성하는 메서드
-  private createPrompt(dto: AiGeneratePlanDto): string {
+  private createPrompt(dto: any, pref: any): string {
     const chapters = dto.chapters
       .map(
         (ch, i) =>
-          `Chapter ${i + 1}: "${ch.chapterTitle}", Difficulty: ${ch.difficulty}, Volume: ${ch.contentVolume}`,
+          `Chapter ${i + 1}: "${ch.chapterTitle}", 난이도: ${ch.difficulty}, 분량: ${ch.contentVolume}`,
       )
       .join('\n');
 
-    return `
-Generate a study plan in JSON format.
+    return [
+      '당신은 학습 계획을 세우는 인공지능입니다.',
+      '아래 정보를 기반으로 하루 단위 학습 일정을 JSON 형식으로 만들어 주세요.',
+      '',
+      `[사용자 정보]`,
+      `- 학습 스타일: ${pref.style === 'focus' ? '하루 한 과목 집중' : '여러 과목 병행'}`,
+      `- 학습 요일: ${pref.studyDays.join(', ')}`,
+      `- 하루 학습 세션 수: ${pref.sessionsPerDay}`,
+      `- 기상 유형: ${pref.wakeTime === 'morning' ? '오전형(9시 시작)' : '야행성(18시 시작)'}`,
+      '',
+      '[시험 정보]',
+      `- 과목: ${dto.subject}`,
+      `- 학습 기간: ${dto.startDate} ~ ${dto.endDate}`,
+      `- 중요도: ${dto.importance}/5`,
+      '- 챕터 목록:',
+      chapters,
+      '',
+      '규칙:',
+      '1. 모든 챕터를 남은 일수에 균등하게 분배하세요.',
+      '2. 하루 단위로 "day"를 지정하고, 해당 날짜의 "chapters"를 배열로 제공하세요.',
+      '3. 복습 또는 휴식일도 포함되면 좋습니다.',
+      '4. 설명 없이 JSON 배열만 출력해 주세요. 백틱(```)은 쓰지 마세요.',
+      '',
+      '예시 출력:',
+      '[',
+      '  { "day": 1, "chapters": ["Chapter 1", "Chapter 2"] },',
+      '  { "day": 2, "chapters": ["Chapter 3"] }',
+      ']',
+    ].join('\n');
+  }
+// ✅ 프론트에 넘기기 좋게 날짜/키 포맷 최적화
+  private optimizeResponse(parsed: any[], startDate: string): any[] {
+    const { format, addDays } = require('date-fns');
 
-Subject: ${dto.subject}
-Study period: ${dto.startDate} to ${dto.endDate}
-Importance: ${dto.importance}/5
-Chapters:
-${chapters}
-
-Please return a day-by-day plan in JSON. Do not include explanation.
-`;
+    return parsed.map((item, index) => {
+      const currentDate = addDays(new Date(startDate), index);
+      return {
+        date: format(currentDate, 'yyyy-MM-dd'),
+        day: item.day || index + 1,
+        tasks: item.chapters || [],
+      };
+    });
   }
 }

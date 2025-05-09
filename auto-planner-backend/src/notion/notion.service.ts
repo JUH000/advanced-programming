@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config'; // ✅ 추가
 import { Client } from '@notionhq/client';
 import { SyncToNotionDto } from './dto/sync-to-notion.dto';
+import { format } from 'date-fns';
 
 @Injectable()
 export class NotionService {
@@ -53,5 +54,52 @@ export class NotionService {
     }
 
     return { message: '노션 연동 완료', count: dto.dailyPlan.length };
+  }
+
+  async saveScheduleToNotion(userId: string, schedule: any[]) {
+    const calendarId = this.configService.get<string>('NOTION_CALENDAR_ID');
+    if (!calendarId) throw new Error('Notion 캘린더 ID가 설정되지 않았습니다.');
+
+    for (const entry of schedule) {
+      await this.notion.pages.create({
+        parent: { database_id: calendarId },
+        properties: {
+          Name: {
+            title: [
+              {
+                text: {
+                  content: `Day ${entry.day} 학습`,
+                },
+              },
+            ],
+          },
+          Date: {
+            date: {
+              start: entry.date,
+            },
+          },
+          Tasks: {
+            rich_text: [
+              {
+                text: {
+                  content: entry.tasks.join(', '),
+                },
+              },
+            ],
+          },
+          User: {
+            rich_text: [
+              {
+                text: {
+                  content: userId,
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
+
+    return { message: 'Notion 일정 등록 완료' };
   }
 }

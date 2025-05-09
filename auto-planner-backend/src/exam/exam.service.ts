@@ -20,4 +20,11 @@ export class ExamService {
       exams: results,
     };
   }
+
+  // ✅ 가장 최근 등록된 시험 1건만 가져오기
+  findLatestByUserId(userId: string) {
+    const userExams = this.exams.filter(exam => exam.userId === userId);
+    const latest = userExams[userExams.length - 1];
+    return latest || null;
+  }
 }

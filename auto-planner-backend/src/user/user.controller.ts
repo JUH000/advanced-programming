@@ -20,4 +20,9 @@ export class UserController {
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
+    @Get('all')
+  @ApiOperation({ summary: '전체 사용자 조회' })
+  getAllUsers() {
+    return this.userService.findAll();
+  }
 }

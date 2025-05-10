@@ -1,9 +1,30 @@
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 export declare class UserService {
-    private users;
-    create(createUserDto: CreateUserDto): {
-        message: string;
-        data: CreateUserDto;
-    };
-    findOne(id: string): CreateUserDto;
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    create(createUserDto: CreateUserDto): Promise<{
+        userId: string;
+        password: string;
+        studyPreference: string;
+        id: number;
+        tokenFreeLogin: boolean;
+        createdAt: Date;
+    }>;
+    findOne(userId: string): Promise<{
+        userId: string;
+        password: string;
+        studyPreference: string;
+        id: number;
+        tokenFreeLogin: boolean;
+        createdAt: Date;
+    }>;
+    findAll(): Promise<{
+        userId: string;
+        password: string;
+        studyPreference: string;
+        id: number;
+        tokenFreeLogin: boolean;
+        createdAt: Date;
+    }[]>;
 }

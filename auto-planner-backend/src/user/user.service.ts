@@ -1,23 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
-  private users: CreateUserDto[] = []; // 메모리 저장 (임시)
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    this.users.push(createUserDto);
-    return {
-      message: '사용자 등록 성공',
-      data: createUserDto,
-    };
+  async create(createUserDto: CreateUserDto) {
+    return this.prisma.user.create({
+      data: {
+        userId: createUserDto.userId,
+        password: createUserDto.password,
+        studyPreference: createUserDto.studyPreference,
+        tokenFreeLogin: true,
+      },
+    });
   }
 
-  findOne(id: string) {
-    const user = this.users.find(u => u.userId === id);
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
+  async findOne(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { userId } });
+    if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
     return user;
   }
+  async findAll() {
+    return this.prisma.user.findMany();
+  } 
+
 }

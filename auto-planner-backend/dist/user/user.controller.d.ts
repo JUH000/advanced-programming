@@ -3,9 +3,28 @@ import { UserService } from './user.service';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
-    create(createUserDto: CreateUserDto): {
-        message: string;
-        data: CreateUserDto;
-    };
-    findOne(id: string): CreateUserDto;
+    create(createUserDto: CreateUserDto): Promise<{
+        userId: string;
+        password: string;
+        studyPreference: string;
+        id: number;
+        tokenFreeLogin: boolean;
+        createdAt: Date;
+    }>;
+    findOne(id: string): Promise<{
+        userId: string;
+        password: string;
+        studyPreference: string;
+        id: number;
+        tokenFreeLogin: boolean;
+        createdAt: Date;
+    }>;
+    getAllUsers(): Promise<{
+        userId: string;
+        password: string;
+        studyPreference: string;
+        id: number;
+        tokenFreeLogin: boolean;
+        createdAt: Date;
+    }[]>;
 }

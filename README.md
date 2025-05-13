@@ -128,6 +128,6 @@ GET	/	헬스체크 및 서버 상태 확인
 역할	이름
 AI/생성	WJYEE
 인증 및 외부 연동	JUH000
-DB 수정/삭제	Choi-Bogeong
+DB 수정/삭제	Choi-Bogyeong
 프론트엔드(로그인)	(작성 필요)
 프론트엔드(메인)	(작성 필요)

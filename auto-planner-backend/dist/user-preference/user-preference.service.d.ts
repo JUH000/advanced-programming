@@ -1,10 +1,20 @@
+import { PrismaService } from '../prisma/prisma.service';
 import { UserPreferenceDto } from './dto/user-preference.dto';
 export declare class UserPreferenceService {
-    private store;
-    save(userId: string, dto: UserPreferenceDto): {
-        message: string;
-        userId: string;
-        preference: UserPreferenceDto;
-    };
-    findByUserId(userId: string): UserPreferenceDto | null;
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    save(userId: string, dto: UserPreferenceDto): Promise<{
+        userId: number;
+        id: number;
+        style: string;
+        studyDays: string[];
+        sessionsPerDay: number;
+    }>;
+    findByUserId(userId: string): Promise<{
+        userId: number;
+        id: number;
+        style: string;
+        studyDays: string[];
+        sessionsPerDay: number;
+    } | null>;
 }

@@ -10,12 +10,13 @@ exports.UserPreferenceModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_preference_service_1 = require("./user-preference.service");
 const user_preference_controller_1 = require("./user-preference.controller");
+const prisma_service_1 = require("../prisma/prisma.service");
 let UserPreferenceModule = class UserPreferenceModule {
 };
 exports.UserPreferenceModule = UserPreferenceModule;
 exports.UserPreferenceModule = UserPreferenceModule = __decorate([
     (0, common_1.Module)({
-        providers: [user_preference_service_1.UserPreferenceService],
+        providers: [user_preference_service_1.UserPreferenceService, prisma_service_1.PrismaService],
         controllers: [user_preference_controller_1.UserPreferenceController],
         exports: [user_preference_service_1.UserPreferenceService],
     })

@@ -22,7 +22,6 @@ let UserService = class UserService {
             data: {
                 userId: createUserDto.userId,
                 password: createUserDto.password,
-                studyPreference: createUserDto.studyPreference,
                 tokenFreeLogin: true,
             },
         });

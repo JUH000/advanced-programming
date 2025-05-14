@@ -7,6 +7,6 @@ export declare class AuthController {
     login(dto: LoginDto): Promise<{
         access_token: string;
     }>;
-    redirectToNotion(res: Response): void;
-    handleNotionCallback(code: string, res: Response): Promise<Response<any, Record<string, any>>>;
+    redirectToNotion(userId: string, res: Response): Response<any, Record<string, any>>;
+    handleNotionCallback(code: string, userId: string, res: Response): Promise<Response<any, Record<string, any>>>;
 }

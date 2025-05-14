@@ -6,7 +6,6 @@ export declare class UserController {
     create(createUserDto: CreateUserDto): Promise<{
         userId: string;
         password: string;
-        studyPreference: string;
         id: number;
         tokenFreeLogin: boolean;
         createdAt: Date;
@@ -14,7 +13,6 @@ export declare class UserController {
     findOne(id: string): Promise<{
         userId: string;
         password: string;
-        studyPreference: string;
         id: number;
         tokenFreeLogin: boolean;
         createdAt: Date;
@@ -22,7 +20,6 @@ export declare class UserController {
     getAllUsers(): Promise<{
         userId: string;
         password: string;
-        studyPreference: string;
         id: number;
         tokenFreeLogin: boolean;
         createdAt: Date;

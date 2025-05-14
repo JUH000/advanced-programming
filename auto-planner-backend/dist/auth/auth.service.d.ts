@@ -9,7 +9,6 @@ export declare class AuthService {
     validateUser(userId: string, password: string): Promise<{
         userId: string;
         password: string;
-        studyPreference: string;
         id: number;
         tokenFreeLogin: boolean;
         createdAt: Date;
@@ -20,7 +19,6 @@ export declare class AuthService {
     signup(dto: CreateUserDto): Promise<{
         userId: string;
         password: string;
-        studyPreference: string;
         id: number;
         tokenFreeLogin: boolean;
         createdAt: Date;

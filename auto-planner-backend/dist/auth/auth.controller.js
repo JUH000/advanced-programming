@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const login_dto_1 = require("./dto/login.dto");
 const swagger_1 = require("@nestjs/swagger");
 const axios_1 = require("axios");
+const notion_token_store_1 = require("./notion-token.store");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -26,13 +27,15 @@ let AuthController = class AuthController {
     login(dto) {
         return this.authService.login(dto);
     }
-    redirectToNotion(res) {
+    redirectToNotion(userId, res) {
         const clientId = process.env.NOTION_CLIENT_ID;
         const redirectUri = process.env.NOTION_REDIRECT_URI;
-        const notionOAuthUrl = `https://api.notion.com/v1/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&owner=user`;
-        return res.redirect(notionOAuthUrl);
+        const state = `user-${userId}`;
+        const notionOAuthUrl = `https://api.notion.com/v1/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&owner=user`;
+        console.log(notionOAuthUrl);
+        return res.send(notionOAuthUrl);
     }
-    async handleNotionCallback(code, res) {
+    async handleNotionCallback(code, userId, res) {
         const clientId = process.env.NOTION_CLIENT_ID;
         const clientSecret = process.env.NOTION_CLIENT_SECRET;
         const redirectUri = process.env.NOTION_REDIRECT_URI;
@@ -52,7 +55,8 @@ let AuthController = class AuthController {
             });
             const access_token = tokenResponse.data.access_token;
             const workspace_id = tokenResponse.data.workspace_id;
-            console.log('✅ Notion 연동 성공:', access_token);
+            (0, notion_token_store_1.saveToken)(userId, access_token);
+            console.log(`[✅ Notion 연동 완료] userId: ${userId}, token: ${access_token}`);
             return res.send('Notion 연동이 완료되었습니다! 이 창은 닫아도 됩니다.');
         }
         catch (error) {
@@ -73,18 +77,20 @@ __decorate([
 __decorate([
     (0, common_1.Get)('notion/redirect'),
     (0, swagger_1.ApiOperation)({ summary: 'Notion OAuth 인증 리다이렉트' }),
-    __param(0, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)('userId')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "redirectToNotion", null);
 __decorate([
     (0, common_1.Get)('notion/callback'),
     (0, swagger_1.ApiOperation)({ summary: 'Notion OAuth 콜백 처리' }),
     __param(0, (0, common_1.Query)('code')),
-    __param(1, (0, common_1.Res)()),
+    __param(1, (0, common_1.Query)('state')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "handleNotionCallback", null);
 exports.AuthController = AuthController = __decorate([

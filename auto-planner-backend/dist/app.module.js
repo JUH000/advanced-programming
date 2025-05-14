@@ -18,6 +18,7 @@ const auth_module_1 = require("./auth/auth.module");
 const exam_module_1 = require("./exam/exam.module");
 const ai_module_1 = require("./planner/ai/ai.module");
 const planner_module_1 = require("./planner/planner.module");
+const notion_module_1 = require("./notion/notion.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -34,6 +35,7 @@ exports.AppModule = AppModule = __decorate([
             exam_module_1.ExamModule,
             ai_module_1.AiModule,
             planner_module_1.PlannerModule,
+            notion_module_1.NotionModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

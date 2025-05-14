@@ -3,6 +3,7 @@ import { PlannerService } from './planner.service';
 import { ConfirmPlanDto } from './dto/confirm-plan.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { getToken } from 'src/auth/notion-token.store';
 
 @ApiTags('planner')
 @Controller('planner')
@@ -18,6 +19,9 @@ export class PlannerController {
     @Param('id') id: string,
     @Body() dto: ConfirmPlanDto,
   ) {
+    const token = getToken(id); // ✅ Notion token 불러오기
+    console.log(`[PLANNER] 불러온 Notion token: ${token}`);
+
     return this.plannerService.confirmPlan(id, dto);
   }
 }

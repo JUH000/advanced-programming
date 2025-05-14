@@ -18,12 +18,15 @@ const planner_service_1 = require("./planner.service");
 const confirm_plan_dto_1 = require("./dto/confirm-plan.dto");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const swagger_1 = require("@nestjs/swagger");
+const notion_token_store_1 = require("../auth/notion-token.store");
 let PlannerController = class PlannerController {
     plannerService;
     constructor(plannerService) {
         this.plannerService = plannerService;
     }
     confirmPlan(id, dto) {
+        const token = (0, notion_token_store_1.getToken)(id);
+        console.log(`[PLANNER] 불러온 Notion token: ${token}`);
         return this.plannerService.confirmPlan(id, dto);
     }
 };

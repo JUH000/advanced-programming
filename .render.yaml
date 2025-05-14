@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: auto-planner-api
+    env: node
+    rootDir: auto-planner-backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod

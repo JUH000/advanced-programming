@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly prisma: PrismaService) {}
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -19,10 +21,17 @@ export class UserService {
   async findOne(userId: string) {
     const user = await this.prisma.user.findUnique({ where: { userId } });
     if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
+  async findOne(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { userId } });
+    if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
     return user;
   }
   async findAll() {
     return this.prisma.user.findMany();
   } 
+  async findAll() {
+    return this.prisma.user.findMany();
+  } 
 
+}
 }

@@ -8,7 +8,17 @@ async function bootstrap() {
     const config = new swagger_1.DocumentBuilder()
         .setTitle('AI Planner API')
         .setDescription('AI 기반 시험 계획 생성기')
+        .setTitle('AI Planner API')
+        .setDescription('AI 기반 시험 계획 생성기')
         .setVersion('1.0')
+        .addTag('planner')
+        .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+    }, 'access-token')
         .addTag('planner')
         .addBearerAuth({
         type: 'http',

@@ -17,10 +17,39 @@ model StudyPreference {
 }
 
 model User {
-  id               Int      @id @default(autoincrement())
-  userId           String   @unique
+  id               Int              @id @default(autoincrement())
+  userId           String           @unique
   password         String
-  tokenFreeLogin   Boolean  @default(true)
-  createdAt        DateTime @default(now())
+  tokenFreeLogin   Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+
   preference       StudyPreference?
+  exams            Exam[]           // ✅ 추가된 필드
+}
+
+model Exam {
+  id         Int       @id @default(autoincrement())
+  subject    String
+  startDate  DateTime
+  endDate    DateTime
+  importance Int
+
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int       // FK
+
+  chapters   Chapter[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+
+model Chapter {
+  id            Int       @id @default(autoincrement())
+  exam          Exam      @relation(fields: [examId], references: [id])
+  examId        Int
+  chapterTitle  String
+  difficulty    Int
+  contentVolume Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

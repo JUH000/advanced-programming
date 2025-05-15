@@ -41,7 +41,7 @@ export class AiPlannerService {
 
       const rawText = response.data?.[0]?.generated_text || response.data;
       const parsed = JSON.parse(rawText);
-      const optimized = this.optimizeResponse(parsed, exam.startDate);// ← dto → exam
+      const optimized = this.optimizeResponse(parsed, exam.startDate.toISOString());// ← dto → exam
       await this.notionService.saveScheduleToNotion(userId, optimized);
       return optimized;
     } catch (err) {

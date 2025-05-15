@@ -1,10 +1,13 @@
+// src/exam/exam.module.ts
+
 import { Module } from '@nestjs/common';
-import { ExamController } from './exam.controller';
 import { ExamService } from './exam.service';
+import { ExamController } from './exam.controller';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
-  providers: [ExamService],
-  exports: [ExamService], // ✅ 추가: 다른 모듈에서 사용할 수 있도록 내보냄
+  providers: [ExamService, PrismaService],
   controllers: [ExamController],
+  exports: [ExamService], // ✅ 이 줄을 꼭 추가!
 })
 export class ExamModule {}

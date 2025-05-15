@@ -3,12 +3,50 @@ import { ExamService } from './exam.service';
 export declare class ExamController {
     private readonly examService;
     constructor(examService: ExamService);
-    create(createExamDto: CreateExamDto): {
+    create(createExamDto: CreateExamDto): Promise<{
         message: string;
-        data: CreateExamDto;
-    };
-    findByUser(userId: string): {
+        data: {
+            chapters: {
+                id: number;
+                createdAt: Date;
+                chapterTitle: string;
+                difficulty: number;
+                contentVolume: number;
+                updatedAt: Date;
+                examId: number;
+            }[];
+        } & {
+            userId: number;
+            id: number;
+            createdAt: Date;
+            subject: string;
+            startDate: Date;
+            endDate: Date;
+            importance: number;
+            updatedAt: Date;
+        };
+    }>;
+    findByUser(userId: string): Promise<{
         userId: string;
-        exams: CreateExamDto[];
-    };
+        exams: ({
+            chapters: {
+                id: number;
+                createdAt: Date;
+                chapterTitle: string;
+                difficulty: number;
+                contentVolume: number;
+                updatedAt: Date;
+                examId: number;
+            }[];
+        } & {
+            userId: number;
+            id: number;
+            createdAt: Date;
+            subject: string;
+            startDate: Date;
+            endDate: Date;
+            importance: number;
+            updatedAt: Date;
+        })[];
+    }>;
 }

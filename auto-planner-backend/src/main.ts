@@ -58,6 +58,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // ✅ Render 호환을 위한 포트 설정
-  await app.listen(process.env.PORT || 3000, '0.0.0.0');
+  await app.listen(process.env.PORT || 4523, '0.0.0.0');
 }
 bootstrap();

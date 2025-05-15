@@ -1,30 +1,69 @@
+// exam.service.ts
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service'; // 경로는 프로젝트 구조에 따라 조정
 import { CreateExamDto } from './dto/create-exam.dto';
 
 @Injectable()
 export class ExamService {
-  private exams: CreateExamDto[] = [];
+  constructor(private prisma: PrismaService) {}
 
-  create(exam: CreateExamDto) {
-    this.exams.push(exam);
+// exam.service.ts
+  async create(exam: CreateExamDto) {
+    // 1. 문자열 userId로 내부 user.id 찾기
+    const user = await this.prisma.user.findUnique({
+      where: { userId: exam.userId },
+    });
+
+    if (!user) {
+      throw new Error(`User with userId '${exam.userId}' not found`);
+    }
+
+    // 2. exam 저장 (user.id로 연결)
+    const created = await this.prisma.exam.create({
+      data: {
+        subject: exam.subject,
+        startDate: new Date(exam.startDate),
+        endDate: new Date(exam.endDate),
+        importance: exam.importance,
+        userId: user.id,
+        chapters: {
+          create: exam.chapters.map((ch) => ({
+            chapterTitle: ch.chapterTitle,
+            difficulty: ch.difficulty,
+            contentVolume: ch.contentVolume,
+          })),
+        },
+      },
+      include: { chapters: true },
+    });
+
     return {
       message: '시험 정보 등록 완료',
-      data: exam,
+      data: created,
     };
   }
+  // exam.service.ts
+async findByUser(userId: string) {
+  const user = await this.prisma.user.findUnique({ where: { userId } });
+  if (!user) return { userId, exams: [] };
 
-  findByUser(userId: string) {
-    const results = this.exams.filter(exam => exam.userId === userId);
-    return {
-      userId,
-      exams: results,
-    };
-  }
+  const exams = await this.prisma.exam.findMany({
+    where: { userId: user.id },
+    include: { chapters: true },
+  });
 
-  // ✅ 가장 최근 등록된 시험 1건만 가져오기
-  findLatestByUserId(userId: string) {
-    const userExams = this.exams.filter(exam => exam.userId === userId);
-    const latest = userExams[userExams.length - 1];
-    return latest || null;
-  }
+  return { userId, exams };
+}
+
+async findLatestByUserId(userId: string) {
+  const user = await this.prisma.user.findUnique({ where: { userId } });
+  if (!user) return null;
+
+  return await this.prisma.exam.findFirst({
+    where: { userId: user.id },
+    orderBy: { createdAt: 'desc' },
+    include: { chapters: true },
+  });
+}
+
 }

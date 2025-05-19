@@ -30,7 +30,7 @@
     background-color: #f3f4f6;
     display: flex;
     justify-content: center;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 
   .main-content-area {
@@ -48,7 +48,7 @@
     display: flex;
     flex-direction: column;
     gap: 32px;
-    padding: 48px 0;
+    padding: 32px 0;
     box-sizing: border-box;
     flex-shrink: 0;
   }

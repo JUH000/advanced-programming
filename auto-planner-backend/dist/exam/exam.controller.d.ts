@@ -5,10 +5,48 @@ export declare class ExamController {
     constructor(examService: ExamService);
     create(createExamDto: CreateExamDto): Promise<{
         message: string;
-        data: any;
+        data: {
+            chapters: {
+                id: number;
+                createdAt: Date;
+                chapterTitle: string;
+                difficulty: number;
+                contentVolume: number;
+                updatedAt: Date;
+                examId: number;
+            }[];
+        } & {
+            userId: number;
+            id: number;
+            createdAt: Date;
+            subject: string;
+            startDate: Date;
+            endDate: Date;
+            importance: number;
+            updatedAt: Date;
+        };
     }>;
     findByUser(userId: string): Promise<{
         userId: string;
-        exams: any;
+        exams: ({
+            chapters: {
+                id: number;
+                createdAt: Date;
+                chapterTitle: string;
+                difficulty: number;
+                contentVolume: number;
+                updatedAt: Date;
+                examId: number;
+            }[];
+        } & {
+            userId: number;
+            id: number;
+            createdAt: Date;
+            subject: string;
+            startDate: Date;
+            endDate: Date;
+            importance: number;
+            updatedAt: Date;
+        })[];
     }>;
 }

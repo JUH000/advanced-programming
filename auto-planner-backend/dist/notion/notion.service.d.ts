@@ -10,6 +10,7 @@ export declare class NotionService {
         subject: string;
         date: string;
         content: string;
+        databaseId: string;
     }): Promise<import("@notionhq/client/build/src/api-endpoints").CreatePageResponse>;
     syncToNotion(dto: SyncToNotionDto): Promise<{
         message: string;

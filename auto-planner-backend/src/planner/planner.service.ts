@@ -1,3 +1,4 @@
+// planner.service.ts
 import { Injectable } from '@nestjs/common';
 import { GeneratePlanDto } from './dto/generate-plan.dto';
 import { ConfirmPlanDto } from './dto/confirm-plan.dto';
@@ -43,6 +44,7 @@ export class PlannerService {
         subject: dto.subject,
         date: formattedDate, 
         content: content,
+        databaseId: dto.databaseId,
       });
     }
   
@@ -75,3 +77,4 @@ export class PlannerService {
   //   };
   // }
 }
+

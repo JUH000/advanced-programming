@@ -1,3 +1,4 @@
+// planner.controller.ts
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { PlannerService } from './planner.service';
 import { ConfirmPlanDto } from './dto/confirm-plan.dto';
@@ -20,8 +21,12 @@ export class PlannerController {
     @Body() dto: ConfirmPlanDto,
   ) {
     const token = getToken(dto.userId); // ✅ Notion token 불러오기
-    console.log(`[PLANNER] 불러온 Notion token: ${token}`);
+    // console.log(`[PLANNER] 불러온 Notion token: ${token}`);
+    console.log(`[DEBUG] Notion token for user ${dto.userId}:`, token);
+
 
     return this.plannerService.confirmPlan(id, dto);
   }
 }
+
+

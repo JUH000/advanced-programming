@@ -4,4 +4,5 @@ export declare class ConfirmPlanDto {
     startDate: string;
     endDate: string;
     dailyPlan: string[];
+    databaseId: string;
 }

@@ -46,6 +46,7 @@ let PlannerService = class PlannerService {
                 subject: dto.subject,
                 date: formattedDate,
                 content: content,
+                databaseId: dto.databaseId,
             });
         }
         return {

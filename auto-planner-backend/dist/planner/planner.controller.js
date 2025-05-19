@@ -26,7 +26,7 @@ let PlannerController = class PlannerController {
     }
     confirmPlan(id, dto) {
         const token = (0, notion_token_store_1.getToken)(dto.userId);
-        console.log(`[PLANNER] 불러온 Notion token: ${token}`);
+        console.log(`[DEBUG] Notion token for user ${dto.userId}:`, token);
         return this.plannerService.confirmPlan(id, dto);
     }
 };

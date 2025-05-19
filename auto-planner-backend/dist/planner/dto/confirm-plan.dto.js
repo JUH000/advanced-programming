@@ -17,6 +17,7 @@ class ConfirmPlanDto {
     startDate;
     endDate;
     dailyPlan;
+    databaseId;
 }
 exports.ConfirmPlanDto = ConfirmPlanDto;
 __decorate([
@@ -39,4 +40,8 @@ __decorate([
     (0, swagger_1.ApiProperty)({ example: ['6/1: Chapter 1', '6/2: Chapter 2'] }),
     __metadata("design:type", Array)
 ], ConfirmPlanDto.prototype, "dailyPlan", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: "1ea4fa76f8688090ae04fed52a6e3ca7" }),
+    __metadata("design:type", String)
+], ConfirmPlanDto.prototype, "databaseId", void 0);
 //# sourceMappingURL=confirm-plan.dto.js.map

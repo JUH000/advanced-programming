@@ -15,4 +15,6 @@ export class SyncToNotionDto {
 
   @ApiProperty({ example: ['6/1: 수열의 개념', '6/2: 등차수열'] })
   dailyPlan: string[];
+
+  databaseId: string;
 }

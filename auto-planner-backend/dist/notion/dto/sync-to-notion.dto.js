@@ -17,6 +17,7 @@ class SyncToNotionDto {
     startDate;
     endDate;
     dailyPlan;
+    databaseId;
 }
 exports.SyncToNotionDto = SyncToNotionDto;
 __decorate([

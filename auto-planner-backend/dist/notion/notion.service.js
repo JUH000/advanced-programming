@@ -31,7 +31,7 @@ let NotionService = class NotionService {
     async addPlanEntry(data) {
         const notion = this.getClientForUser(data.userId);
         return await notion.pages.create({
-            parent: { database_id: this.defaultDatabaseId },
+            parent: { database_id: data.databaseId },
             properties: {
                 Subject: {
                     title: [{ text: { content: data.subject } }],
@@ -57,6 +57,7 @@ let NotionService = class NotionService {
                 subject: dto.subject,
                 date: formattedDate,
                 content,
+                databaseId: dto.databaseId,
             });
         }
         return {

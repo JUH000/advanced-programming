@@ -26,11 +26,12 @@ export class NotionService {
     subject: string;
     date: string;
     content: string;
+    databaseId: string;
   }) {
     const notion = this.getClientForUser(data.userId);
 
     return await notion.pages.create({
-      parent: { database_id: this.defaultDatabaseId },
+      parent: { database_id: data.databaseId },
       properties: {
         Subject: {
           title: [{ text: { content: data.subject } }],
@@ -58,6 +59,7 @@ export class NotionService {
         subject: dto.subject,
         date: formattedDate,
         content,
+        databaseId: dto.databaseId,
       });
     }
 

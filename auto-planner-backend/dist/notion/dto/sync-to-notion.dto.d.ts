@@ -4,4 +4,5 @@ export declare class SyncToNotionDto {
     startDate: string;
     endDate: string;
     dailyPlan: string[];
+    databaseId: string;
 }

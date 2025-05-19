@@ -15,4 +15,7 @@ export class ConfirmPlanDto {
 
   @ApiProperty({ example: ['6/1: Chapter 1', '6/2: Chapter 2'] })
   dailyPlan: string[];
+
+  @ApiProperty({ example: "1ea4fa76f8688090ae04fed52a6e3ca7" })
+  databaseId: string;
 }

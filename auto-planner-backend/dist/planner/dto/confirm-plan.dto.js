@@ -21,7 +21,7 @@ class ConfirmPlanDto {
 }
 exports.ConfirmPlanDto = ConfirmPlanDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'user123' }),
+    (0, swagger_1.ApiProperty)({ example: '202255179' }),
     __metadata("design:type", String)
 ], ConfirmPlanDto.prototype, "userId", void 0);
 __decorate([
@@ -41,7 +41,7 @@ __decorate([
     __metadata("design:type", Array)
 ], ConfirmPlanDto.prototype, "dailyPlan", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: "1ea4fa76f8688090ae04fed52a6e3ca7" }),
+    (0, swagger_1.ApiProperty)({ example: "1f462039491480a48452f3bd7436ffd2" }),
     __metadata("design:type", String)
 ], ConfirmPlanDto.prototype, "databaseId", void 0);
 //# sourceMappingURL=confirm-plan.dto.js.map

@@ -8,5 +8,5 @@ export declare class AuthController {
         access_token: string;
     }>;
     redirectToNotion(userId: string, res: Response): Response<any, Record<string, any>>;
-    handleNotionCallback(code: string, userId: string, res: Response): Promise<Response<any, Record<string, any>>>;
+    handleNotionCallback(code: string, state: string, res: Response): Promise<Response<any, Record<string, any>>>;
 }

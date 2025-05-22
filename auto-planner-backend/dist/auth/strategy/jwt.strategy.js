@@ -25,6 +25,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         this.configService = configService;
     }
     async validate(payload) {
+        console.log('[DEBUG] JwtStrategy.validate 실행됨:', payload);
         return { userId: payload.sub };
     }
 };

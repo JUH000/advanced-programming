@@ -1,10 +1,16 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AiPlannerService } from './ai-planner.service';
-import { AiGeneratePlanDto } from './dto/ai-planner.dto'; // 사용자 입력 DTO
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { AiGeneratePlanDto } from './dto/ai-planner.dto';
+import { SyncToNotionDto } from '../../notion/dto/sync-to-notion.dto';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 
-@ApiTags('ai-plan') // Swagger 문서 그룹 이름
-@Controller('ai-plan') // 실제 라우트 경로: /ai-plan
+@ApiTags('ai-plan')
+@Controller('ai-plan')
 export class AiPlannerController {
   constructor(private readonly aiPlannerService: AiPlannerService) {}
 
@@ -23,7 +29,8 @@ export class AiPlannerController {
       },
     },
   })
-  async generatePlan(@Body() body: { userId: string }) {
+  @ApiOkResponse({ type: [SyncToNotionDto] }) // ✅ 이거 추가
+  async generatePlan(@Body() body: AiGeneratePlanDto) { // ✅ inline 타입 대신 DTO 사용
     return this.aiPlannerService.generateStudyPlanByUserId(body.userId);
   }
 }

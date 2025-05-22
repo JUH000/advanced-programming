@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiPlannerController = void 0;
 const common_1 = require("@nestjs/common");
 const ai_planner_service_1 = require("./ai-planner.service");
+const ai_planner_dto_1 = require("./dto/ai-planner.dto");
+const sync_to_notion_dto_1 = require("../../notion/dto/sync-to-notion.dto");
 const swagger_1 = require("@nestjs/swagger");
 let AiPlannerController = class AiPlannerController {
     aiPlannerService;
@@ -42,9 +44,10 @@ __decorate([
             },
         },
     }),
+    (0, swagger_1.ApiOkResponse)({ type: [sync_to_notion_dto_1.SyncToNotionDto] }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [ai_planner_dto_1.AiGeneratePlanDto]),
     __metadata("design:returntype", Promise)
 ], AiPlannerController.prototype, "generatePlan", null);
 exports.AiPlannerController = AiPlannerController = __decorate([

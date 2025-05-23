@@ -3,8 +3,8 @@ import axios from 'axios';
 
 @Injectable()
 export class LLMClientService {
-  async generate(prompt: string): Promise<any> {
-    const HF_API_URL = 'http://localhost:8000/v1/completions'; // 🔁 로컬 LLM 주소
+  async generate(prompt: string): Promise<any[]> {
+    const HF_API_URL = 'http://127.0.0.1:8000/v1/completions';
 
     const response = await axios.post(HF_API_URL, {
       model: 'openchat',

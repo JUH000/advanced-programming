@@ -29,27 +29,17 @@ let AiPlannerService = class AiPlannerService {
     async generateStudyPlanByUserId(userId) {
         const preference = await this.userPreferenceService.findByUserId(userId);
         const { exams } = await this.examService.findByUser(userId);
-        console.log('✅ preference:', preference);
-        console.log('✅ exams:', exams);
         if (!preference || !exams || exams.length === 0) {
             throw new common_1.InternalServerErrorException('❌ 유저 정보 또는 시험 데이터가 부족합니다.');
         }
         const mergedSubjects = this.mergeSubjects(exams);
         const prompt = this.createPrompt(mergedSubjects, preference);
-        const raw = await this.llmClient.generate(prompt);
-        const jsonMatch = raw.match(/\[\s*{[\s\S]*?}\s*\]/);
-        if (!jsonMatch) {
-            console.error('❌ LLM 응답에서 JSON 추출 실패:', raw);
+        const parsed = await this.llmClient.generate(prompt);
+        if (!Array.isArray(parsed)) {
+            console.error('❌ LLM 응답이 배열이 아님:', parsed);
             throw new common_1.InternalServerErrorException('LLM 응답이 JSON 배열 형식이 아닙니다.');
         }
-        try {
-            const parsed = JSON.parse(jsonMatch[0]);
-            return parsed;
-        }
-        catch (e) {
-            console.error('❌ JSON 파싱 오류:', jsonMatch[0]);
-            throw new common_1.InternalServerErrorException('JSON 파싱에 실패했습니다.');
-        }
+        return parsed;
     }
     mergeSubjects(exams) {
         const grouped = {};
@@ -77,25 +67,72 @@ let AiPlannerService = class AiPlannerService {
     }
     createPrompt(subjects, pref) {
         const lines = [
-            'You are an AI that returns ONLY a JSON array in the following format:',
-            '[{"subject": "과목명", "startDate": "yyyy-MM-dd", "endDate": "yyyy-MM-dd", "dailyPlan": ["6/1: 과목명 - 챕터명"]}]',
-            '',
-            'DO NOT add any explanation, headers, or notes.',
-            '',
-            `User Preferences:`,
-            `- Style: ${pref.style === 'focus' ? 'Focused' : 'Multi'}`,
-            `- Study Days: ${pref.studyDays.join(', ')}`,
-            `- Sessions per Day: ${pref.sessionsPerDay}`,
-            '',
-            'Exams:',
+            "You are an assistant that returns ONLY a valid JSON array. No explanations.",
+            "",
+            "Each object must include:",
+            "- subject",
+            "- startDate",
+            "- endDate",
+            '- dailyPlan (list of study strings in the format: \"MM/DD: 과목명 - 챕터명 (p.xx-yy)\")',
+            "",
+            "Use contentVolume of chapters to estimate page range. For example, if contentVolume = 5, you might output (p.1-5). Use 5 pages per unit volume.",
+            "",
+            "Study preferences:",
+            "- Style: Multi",
+            "- Study Days: 월, 화, 수, 목, 금",
+            "- Sessions per Day: 4",
+            "",
+            "Exams:",
+            "- Subject: 의료기기인허가",
+            "  Period: 2025-05-23 ~ 2025-06-16",
+            "  Chapters:",
+            "    - Chapter 1: 의료기기관련기준규격 (contentVolume: 6)",
+            "    - Chapter 2: 전자파안전 (contentVolume: 4)",
+            "    - Chapter 3: GMP (contentVolume: 5)",
+            "    - Chapter 4: GMP 기준 해설 (contentVolume: 6)",
+            "",
+            "- Subject: 시계열분석",
+            "  Period: 2025-05-23 ~ 2025-06-11",
+            "  Chapters:",
+            "    - Chapter 1: 시계열 데이터의 개념과 특성 (contentVolume: 5)",
+            "    - Chapter 2: 자기상관과 정상성 (contentVolume: 6)",
+            "    - Chapter 3: AR, MA, ARMA 모델 (contentVolume: 5)",
+            "    - Chapter 4: ARIMA 및 차분 기법 (contentVolume: 5)",
+            "    - Chapter 5: 계절성, 트렌드, 예측 (contentVolume: 5)",
+            "",
+            "Return a JSON array like this (with real content):",
+            "[",
+            "  {",
+            '    "subject": "의료기기인허가",',
+            '    "startDate": "2025-05-23",',
+            '    "endDate": "2025-06-16",',
+            '    "dailyPlan": [',
+            '      "6/1: 의료기기인허가 - 의료기기관련기준규격 (p.1-6)",',
+            '      "6/2: 의료기기인허가 - 전자파안전 (p.7-10)"',
+            "    ]",
+            "  },",
+            "  {",
+            '    "subject": "시계열분석",',
+            '    "startDate": "2025-05-23",',
+            '    "endDate": "2025-06-11",',
+            '    "dailyPlan": [',
+            '      "6/1: 시계열분석 - 시계열 데이터의 개념과 특성 (p.1-5)"',
+            "    ]",
+            "  }",
+            "]"
         ];
         for (const subj of subjects) {
-            const chapters = subj.chapters
-                .map((ch, i) => `Chapter ${i + 1}: ${ch.chapterTitle}`)
-                .join(', ');
-            lines.push(`- Subject: ${subj.subject}`, `  Period: ${new Date(subj.startDate).toDateString()} ~ ${new Date(subj.endDate).toDateString()}`, `  Chapters: ${chapters}`, '');
+            const chapters = subj.chapters.map((ch, i) => {
+                const parts = [`Chapter ${i + 1}: ${ch.chapterTitle}`];
+                if (ch.contentVolume)
+                    parts.push(`(${ch.contentVolume} units)`);
+                if (ch.difficulty)
+                    parts.push(`난이도: ${ch.difficulty}`);
+                return parts.join(' ');
+            }).join(', ');
+            lines.push(`- Subject: ${subj.subject}`, `  Period: ${new Date(subj.startDate).toDateString()} ~ ${new Date(subj.endDate).toDateString()}`, `  Chapters: ${chapters}`, "");
         }
-        lines.push('Only return the JSON array.');
+        lines.push("Now generate the full JSON array based on the exams above.");
         return lines.join('\n');
     }
 };

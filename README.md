@@ -127,8 +127,7 @@ AI 기반 개인 맞춤형 학습 계획표 생성 서비스
 
 ### Frontend
 - **Framework**: Svelte
-- **Deployment**: Netlify
-- **Features**: 반응형 웹 디자인, API 연동
+- **Features**: API 연동
 
 ### Backend
 - **Framework**: NestJS
@@ -147,8 +146,8 @@ AI 기반 개인 맞춤형 학습 계획표 생성 서비스
 - 회원가입/로그인 (JWT 기반 인증)
 - 개인 공부 성향 프로필 설정
   - 하루 학습 패턴 (한 과목 집중 vs. 여러 과목 병행)
-  - 선호 학습 시간대
-  - 집중력 지속 시간 등
+  - 학습 요일 
+  - 하루 학습 세션 수
 
 ### 학습 계획 생성
 - 과목별 정보 입력
@@ -157,13 +156,13 @@ AI 기반 개인 맞춤형 학습 계획표 생성 서비스
 - AI 기반 맞춤형 학습 스케줄 자동 생성 후, 이를 DB에 저장장
 
 ### 외부 연동
-- Notion Calendar 연동
+- Notion DB 및 Calendar 연동
 - 실시간 일정 동기화
 
 ## 👥 팀 구성 및 역할
 
 ### Frontend Team
-- **임도향**: 로그인 페이지 구현
+- **임도향**: 로그인 페이지 및 노션 연동 구현
 - **김수현**: 메인 화면 구현
 
 ### Backend Team
@@ -214,8 +213,7 @@ Backend
   - PostgreSQL
   - Prisma
 Frontend
-  - Svelte
-  - Netlify 
+  - Svelte 
 
 ### Backend Setup
 ```bash
@@ -239,7 +237,7 @@ npm run start:dev
 
 ### Frontend Setup
 ```bash
-cd advanced-programming/frontend
+cd advanced-programming/frontend/idh
 
 # 의존성 설치
 npm install
@@ -263,10 +261,20 @@ advanced-programming
 │   │   ├── prisma/               # NestJS 내에서 Prisma 클라이언트 DI를 위한 서비스 제공
 │   │   ├── user/                 # 사용자 계정 생성, 조회 등을 처리하는 API
 │   │   ├── user-preference/      # 학습 스타일, 요일, 세션 수 등 사용자 선호도 설정 및 조회 API
-├── frontend/                     # 프론트엔드 Svelte 프로젝트
-│   ├── /                         # 메인 화면, 로그인/계정 생성 화면, 학습 계획 페이지 등
+├── frontend/idh                  # 프론트엔드 Svelte 프로젝트
+│   ├── src/                                    # 소스 코드 루트
+│   │   ├── lib/                                # 공통 라이브러리 및 유틸리티
+│   │   │   └── api/                            # 백엔드 API 연동 모듈
+│   │   │   └── components/                     # Svelte UI 컴포넌트 모음
+│   │   │   └── stores/                         # Svelte 상태 관리(store) 모듈
+│   │   ├── routes/                             # SvelteKit 라우트(페이지) 폴더
+│   │   │   └── exam/                           # 시험 정보 페이지 라우트
+│   │   │   └── main/                           # 메인 대시보드 페이지 라우트
+│   │   │   └── signup/                         # 회원가입 페이지 라우트
+│   │   │   └── userinfo/                       # 회원정보 페이지 라우트
+│   │   │   └── userpreference/                 # 사용자 선호도 페이지 라우트
+│   │   │   └── +page.svelte                    # 로그인 페이지 라우트
 ```
-
 
 ## 📖 API 문서
 ![⚙️ 구성 요소 및 포트 매핑](img/API.png)

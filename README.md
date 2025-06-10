@@ -262,18 +262,18 @@ advanced-programming
 │   │   ├── user/                 # 사용자 계정 생성, 조회 등을 처리하는 API
 │   │   ├── user-preference/      # 학습 스타일, 요일, 세션 수 등 사용자 선호도 설정 및 조회 API
 ├── frontend/idh                  # 프론트엔드 Svelte 프로젝트
-│   ├── src/                                    # 소스 코드 루트
-│   │   ├── lib/                                # 공통 라이브러리 및 유틸리티
-│   │   │   └── api/                            # 백엔드 API 연동 모듈
-│   │   │   └── components/                     # Svelte UI 컴포넌트 모음
-│   │   │   └── stores/                         # Svelte 상태 관리(store) 모듈
-│   │   ├── routes/                             # SvelteKit 라우트(페이지) 폴더
-│   │   │   └── exam/                           # 시험 정보 페이지 라우트
-│   │   │   └── main/                           # 메인 대시보드 페이지 라우트
-│   │   │   └── signup/                         # 회원가입 페이지 라우트
-│   │   │   └── userinfo/                       # 회원정보 페이지 라우트
-│   │   │   └── userpreference/                 # 사용자 선호도 페이지 라우트
-│   │   │   └── +page.svelte                    # 로그인 페이지 라우트
+│   ├── src/                      # 소스 코드 루트
+│   │   ├── lib/                  # 공통 라이브러리 및 유틸리티
+│   │   │   └── api/              # 백엔드 API 연동 모듈
+│   │   │   └── components/       # Svelte UI 컴포넌트 모음
+│   │   │   └── stores/           # Svelte 상태 관리(store) 모듈
+│   │   ├── routes/               # SvelteKit 라우트(페이지) 폴더
+│   │   │   └── exam/             # 시험 정보 페이지 라우트
+│   │   │   └── main/             # 메인 대시보드 페이지 라우트
+│   │   │   └── signup/           # 회원가입 페이지 라우트
+│   │   │   └── userinfo/         # 회원정보 페이지 라우트
+│   │   │   └── userpreference/   # 사용자 선호도 페이지 라우트
+│   │   │   └── +page.svelte      # 로그인 페이지 라우트
 ```
 
 ## 📖 API 문서
